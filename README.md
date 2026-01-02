@@ -1,18 +1,113 @@
-Sure 🙂 — here is a **simple, clean README** you can use directly:
+# Face Verification using Siamese Network with Triplet Loss (TensorFlow)
+
+## 📌 Project Overview
+
+This project implements a **Siamese neural network** for **face verification** — determining whether two face images belong to the same person.
+The model is trained using **Triplet Loss**, which forces the network to learn a feature space where:
+
+* embeddings of **the same person** are close together
+* embeddings of **different people** are far apart
+
+This type of system is commonly used in:
+
+* biometric authentication
+* identity verification
+* security and access control
+* face matching/search systems
+
+All training, preprocessing, and evaluation are implemented inside a **single Jupyter notebook** for clarity and simplicity.
 
 ---
 
-# Face Verification using Siamese Network (TensorFlow)
+## 📂 Repository Structure
 
-## 📌 Overview
+```
+face-verification-siamese/
+│
+├── Reaidy.io ML Assignment.ipynb     # Main notebook
+│
+├── dataset/                          # Face dataset (e.g., LFW)
+│   └── person_name/
+│       └── image files...
+│
+└── model/
+    └── face_siamese.h5               # Saved trained model
+```
 
-This project builds a **Siamese neural network** that can verify whether two face images belong to the same person.
-The model is trained using **Triplet Loss** so that:
+### Folder Details
 
-* Faces of the **same person** are close in embedding space
-* Faces of **different people** are far apart
+#### 🧪 `Reaidy.io ML Assignment.ipynb`
 
-The model is trained on the **LFW (Labeled Faces in the Wild)** dataset downloaded from Kaggle.
+This notebook contains everything:
+
+* dataset loading
+* face preprocessing
+* model architecture
+* triplet mining
+* training loop
+* evaluation (ROC curve & AUC)
+* saving final model
+
+So the project is easy to run and reproduce.
+
+#### 🖼 `dataset/`
+
+This folder contains the face images used for training and testing.
+Each **sub-folder represents one person**, for example:
+
+```
+dataset/
+ ├── Adam_Scott/
+ ├── Kate_Winslet/
+ ├── Elon_Musk/
+```
+
+This structure allows sampling **positive pairs (same person)** and **negative pairs (different people)**.
+
+#### 🤖 `model/`
+
+Contains the **trained Siamese embedding model**:
+
+```
+model/face_siamese.h5
+```
+
+You can reuse this model for inference later.
+
+---
+
+## 🧠 Approach & Method
+
+### 1️⃣ Embedding Learning
+
+Instead of directly predicting “same or different”, the network learns a **128-dimensional embedding vector** for each face.
+
+### 2️⃣ Triplet Loss
+
+Training uses **anchor, positive, negative** images:
+
+* Anchor = reference image
+* Positive = same person
+* Negative = different person
+
+The loss encourages:
+
+```
+distance(anchor, positive)   --> small
+distance(anchor, negative)   --> large
+```
+
+Margin = 0.2
+
+### 3️⃣ Backbone Network
+
+The model uses **MobileNetV2** as a feature extractor:
+
+* lightweight
+* fast
+* good accuracy
+
+The final embedding is **L2-normalized**.
 
 ---
 
@@ -21,83 +116,123 @@ The model is trained on the **LFW (Labeled Faces in the Wild)** dataset download
 * Python 3
 * TensorFlow / Keras
 * OpenCV
-* scikit-learn
 * NumPy
+* scikit-learn
 * Matplotlib
 
 ---
 
-## 📂 Project Contents
+## 🚀 How to Run the Project
 
-* `train.ipynb` — training notebook
-* `eval.py` — script to evaluate model and plot ROC curve
-* `model/face_siamese.h5` — saved trained model
-* `screenshots/` — ROC curve & training plots
-* `requirements.txt` — dependencies
+### Step 1 — Install Dependencies
 
----
+Run:
 
-## 🚀 What the Project Does
+```
+pip install tensorflow opencv-python scikit-learn matplotlib numpy
+```
 
-1. Downloads a face dataset from Kaggle
-2. Preprocesses face images
-3. Builds a Siamese network
-4. Trains using Triplet Loss
-5. Generates embeddings
-6. Evaluates performance using **ROC-AUC**
+### Step 2 — Place Dataset
 
----
+Ensure your dataset is inside:
 
-## 📈 Example Results
+```
+dataset/
+```
 
-* Output: ROC curve
-* Metric: AUC score
+with one folder per person.
 
-Higher AUC → better verification performance.
+### Step 3 — Open Notebook
 
----
+Run:
 
-## 🔧 How To Run
+```
+Reaidy.io ML Assignment.ipynb
+```
 
-1. Install dependencies
-
-   ```
-   pip install -r requirements.txt
-   ```
-2. Run training
-
-   ```
-   train.ipynb
-   ```
-3. Evaluate
-
-   ```
-   python eval.py
-   ```
+and execute cells in order.
 
 ---
 
-## 💾 Model Output
+## 📈 Model Evaluation
 
-The model produces a **128-dimensional embedding** for each face image.
-Similar faces → smaller distance
-Different faces → larger distance
+The notebook evaluates the model using:
+
+### ✔ ROC Curve
+
+Plots the trade-off between:
+
+* True Positive Rate
+* False Positive Rate
+
+### ✔ AUC Score
+
+Measures verification performance
+(closer to **1.0 = better**)
+
+Distance metric used:
+
+```
+Euclidean distance between embeddings
+```
 
 ---
 
-## 🎯 Use Cases
+## 💾 Output Files
 
-* Face authentication
+### 🧠 Trained Model
+
+Saved to:
+
+```
+model/face_siamese.h5
+```
+
+This model converts face images → embeddings.
+
+You can later:
+
+* compare embeddings
+* verify identity
+* cluster people
+
+---
+
+## 🎯 Applications
+
+* Face authentication systems
+* Attendance tracking
 * Identity verification
-* Duplicate face detection
+* Duplicate account detection
+* Security systems
+
+---
+
+## 📌 Key Learning Outcomes
+
+This project demonstrates:
+
+✔ Deep metric learning
+✔ Siamese architecture
+✔ Triplet loss optimization
+✔ Dataset preprocessing
+✔ ROC-based evaluation
+✔ Model export & reuse
+
+All in a simple, reproducible setup.
 
 ---
 
 ## 👤 Author
 
-Your Name
-Machine Learning Engineer
+Amruthaluri Gavin
 
 ---
 
-If you want, I can also simplify it even more (2–3 sections only).
+## 📝 Notes
+
+This project is for **educational and research purposes only**, not production biometric deployment.
+
+---
+
+
