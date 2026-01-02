@@ -2,20 +2,19 @@
 
 ## 📌 Project Overview
 
-This project implements a **Siamese neural network** for **face verification** — determining whether two face images belong to the same person.
-The model is trained using **Triplet Loss**, which forces the network to learn a feature space where:
+This project implements a **Siamese neural network** for **face verification** — checking whether two face images belong to the same person.
 
-* embeddings of **the same person** are close together
-* embeddings of **different people** are far apart
+The model is trained using **Triplet Loss**, which teaches the network to:
 
-This type of system is commonly used in:
+* pull **same-person images closer** in embedding space
+* push **different-person images further apart**
 
-* biometric authentication
-* identity verification
-* security and access control
-* face matching/search systems
+This is the same idea used in biometric identity systems such as **FaceNet**.
 
-All training, preprocessing, and evaluation are implemented inside a **single Jupyter notebook** for clarity and simplicity.
+👉 **Important Note**
+The **dataset is NOT uploaded to this repository**.
+Instead, the dataset is **downloaded automatically inside the notebook** (e.g., from Kaggle/LFW) when you run it.
+This keeps the repo small and avoids dataset licensing issues.
 
 ---
 
@@ -24,94 +23,78 @@ All training, preprocessing, and evaluation are implemented inside a **single Ju
 ```
 face-verification-siamese/
 │
-├── Reaidy.io ML Assignment.ipynb     # Main notebook
+├── Reaidy.io ML Assignment.ipynb     # Main notebook (training + evaluation)
 │
-├── dataset/                          # Face dataset (e.g., LFW)
-│   └── person_name/
-│       └── image files...
-│
-└── model/
+└── Models/
     └── face_siamese.h5               # Saved trained model
 ```
 
-### Folder Details
+That’s all you need in the repo.
 
-#### 🧪 `Reaidy.io ML Assignment.ipynb`
-
-This notebook contains everything:
-
-* dataset loading
-* face preprocessing
-* model architecture
-* triplet mining
-* training loop
-* evaluation (ROC curve & AUC)
-* saving final model
-
-So the project is easy to run and reproduce.
-
-#### 🖼 `dataset/`
-
-This folder contains the face images used for training and testing.
-Each **sub-folder represents one person**, for example:
+The dataset will be downloaded at runtime to a local folder such as:
 
 ```
 dataset/
- ├── Adam_Scott/
- ├── Kate_Winslet/
- ├── Elon_Musk/
 ```
 
-This structure allows sampling **positive pairs (same person)** and **negative pairs (different people)**.
+but that folder is not committed to GitHub.
 
-#### 🤖 `model/`
+---
 
-Contains the **trained Siamese embedding model**:
+## 🧠 What This Project Does
+
+The notebook performs the full workflow:
+
+### 1️⃣ Download dataset (automatically)
+
+* Downloads a public face dataset (e.g., LFW)
+* Extracts images
+* Organizes them by person
+
+### 2️⃣ Preprocess images
+
+* Resize
+* Normalize
+* Convert to RGB
+
+### 3️⃣ Build Siamese embedding model
+
+* Uses MobileNetV2 backbone
+* Adds 128-D embedding layer
+* Applies L2-normalization
+
+### 4️⃣ Train using Triplet Loss
+
+With triplets:
+
+* Anchor (A)
+* Positive (P)
+* Negative (N)
+
+Loss encourages:
+
+```
+distance(A,P) + margin < distance(A,N)
+```
+
+### 5️⃣ Evaluate performance
+
+* Compute embeddings for face pairs
+* Measure distances
+* Plot ROC curve
+* Compute AUC score
+
+### 6️⃣ Save trained model
+
+Exports model to:
 
 ```
 model/face_siamese.h5
 ```
 
-You can reuse this model for inference later.
-
 ---
 
-## 🧠 Approach & Method
-
-### 1️⃣ Embedding Learning
-
-Instead of directly predicting “same or different”, the network learns a **128-dimensional embedding vector** for each face.
-
-### 2️⃣ Triplet Loss
-
-Training uses **anchor, positive, negative** images:
-
-* Anchor = reference image
-* Positive = same person
-* Negative = different person
-
-The loss encourages:
-
-```
-distance(anchor, positive)   --> small
-distance(anchor, negative)   --> large
-```
-
-Margin = 0.2
-
-### 3️⃣ Backbone Network
-
-The model uses **MobileNetV2** as a feature extractor:
-
-* lightweight
-* fast
-* good accuracy
-
-The final embedding is **L2-normalized**.
-
----
-
-## 🛠 Technologies Used
+## 🛠 Tools & Libraries Used
 
 * Python 3
 * TensorFlow / Keras
@@ -122,53 +105,47 @@ The final embedding is **L2-normalized**.
 
 ---
 
-## 🚀 How to Run the Project
+## 🚀 How To Run This Project
 
-### Step 1 — Install Dependencies
-
-Run:
+### ✔ Step 1 — Install dependencies
 
 ```
-pip install tensorflow opencv-python scikit-learn matplotlib numpy
+pip install tensorflow opencv-python scikit-learn matplotlib numpy kaggle
 ```
 
-### Step 2 — Place Dataset
+(if Kaggle is used)
 
-Ensure your dataset is inside:
-
-```
-dataset/
-```
-
-with one folder per person.
-
-### Step 3 — Open Notebook
-
-Run:
+### ✔ Step 2 — Open the notebook
 
 ```
 Reaidy.io ML Assignment.ipynb
 ```
 
-and execute cells in order.
+### ✔ Step 3 — Run all cells
+
+The notebook will:
+
+✅ download the dataset
+✅ train the model
+✅ evaluate it
+✅ save model to `model/face_siamese.h5`
+
+No manual dataset upload is needed 🎉
 
 ---
 
-## 📈 Model Evaluation
+## 📈 Evaluation
 
-The notebook evaluates the model using:
+The notebook reports:
 
-### ✔ ROC Curve
+### ROC Curve
 
-Plots the trade-off between:
+Shows verification performance
 
-* True Positive Rate
-* False Positive Rate
+### AUC Score
 
-### ✔ AUC Score
-
-Measures verification performance
-(closer to **1.0 = better**)
+Measures accuracy
+(higher = better)
 
 Distance metric used:
 
@@ -178,48 +155,42 @@ Euclidean distance between embeddings
 
 ---
 
-## 💾 Output Files
+## 💾 Output
 
-### 🧠 Trained Model
+### Trained Embedding Model
 
-Saved to:
+Saved as:
 
 ```
 model/face_siamese.h5
 ```
 
-This model converts face images → embeddings.
+You can reuse it for:
 
-You can later:
-
-* compare embeddings
-* verify identity
-* cluster people
+* face authentication
+* identity verification
+* embedding visualization
 
 ---
 
-## 🎯 Applications
+## 🎯 Real-World Applications
 
-* Face authentication systems
-* Attendance tracking
-* Identity verification
-* Duplicate account detection
-* Security systems
+* Login authentication
+* Attendance systems
+* Duplicate detection
+* Person recognition
+* Smart security
 
 ---
 
-## 📌 Key Learning Outcomes
+## 📚 Key Concepts Demonstrated
 
-This project demonstrates:
-
-✔ Deep metric learning
-✔ Siamese architecture
+✔ Siamese neural networks
+✔ Metric learning
 ✔ Triplet loss optimization
-✔ Dataset preprocessing
-✔ ROC-based evaluation
-✔ Model export & reuse
-
-All in a simple, reproducible setup.
+✔ Online triplet sampling
+✔ ROC-AUC evaluation
+✔ Exportable embedding models
 
 ---
 
@@ -229,10 +200,10 @@ Amruthaluri Gavin
 
 ---
 
-## 📝 Notes
+## ⚠️ Disclaimer
 
-This project is for **educational and research purposes only**, not production biometric deployment.
+This project is for **educational & research purposes only** —
+not for deployment in real-world biometric security systems.
 
 ---
-
 
